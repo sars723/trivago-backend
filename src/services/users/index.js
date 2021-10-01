@@ -1,7 +1,9 @@
 import express from "express"
 import UserModel from './schema.js'
-
-/* import { JWTAuthMiddleware } from "../../OAuth/token.js" */
+import { onlyHostAllowedRoute } from '../../OAuth/host_validation_middlew.js'
+import { generatePairOfTokens } from '../../OAuth/jwt-aux.js'
+import { JWTAuthMiddleware } from "../../OAuth/jwt-middle.js"
+import createHttpError from "http-errors"
 
 const usersRouter = express.Router()
 
@@ -50,7 +52,7 @@ usersRouter.delete("/", async (req, res, next) => {
         next(error)
     }
 })
-usersRouter.get("/:userId"/* , adminOnlyMiddleware */, async (req, res, next) => {
+usersRouter.get("/:userId"/* , hostOnlyMiddleware */, async (req, res, next) => {
     try {
         const user = await UserModel.findById(req.params.userId)
         res.send(user)
@@ -64,17 +66,23 @@ usersRouter.post("/login", async (req, res, next) => {
         const { email, password } = req.body
 
         const user = await UserModel.checkCredentials(email, password)
-
+        console.log(user)
         if (user) {
 
             //generate an access token
+            const { accessToken, refreshToken } = await generatePairOfTokens(user)
+
+            res.send({ accessToken, refreshToken })
         } else {
 
             //sending an error (401)
+            next(createHttpError(401, "Credentials are not ok!"))
         }
     } catch (error) {
         next(error)
     }
 })
+
+
 
 export default usersRouter
