@@ -1,6 +1,6 @@
 import createHttpError from "http-errors"
 import { verifyJWT } from "./jwt-aux.js"
-import User from "../db/models/User.js"
+import UserModel from "../services/users/schema.js"
 
 export const JWTAuthMiddleware = async (req, res, next) => {
 
@@ -8,20 +8,20 @@ export const JWTAuthMiddleware = async (req, res, next) => {
     next(createHttpError(401, "Please provide credentials in Authorization header!"))
   } else {
     try {
-      
+
       const token = req.headers.authorization.replace("Bearer ", "")
-      console.log(token)
+      console.log("token", token)
 
       const decodedToken = await verifyJWT(token)
       console.log(decodedToken, 'decoded token')
 
-      const user = await User.findById(decodedToken._id)
-    
+      const user = await UserModel.findById(decodedToken._id)
+
 
       if (user) {
         // user
         req.user = user
-        
+
         next()
       } else {
         next(createHttpError(404, "User not found!"))
