@@ -23,7 +23,7 @@ const generateRefreshedJWT = (payload) =>
 
   const generateJWT = payload =>
   new Promise((resolve, reject) =>
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "50000" }, (err, token) => {
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" }, (err, token) => {
       if (err) reject(err)
       resolve(token)
     })
@@ -54,7 +54,7 @@ export const verifyJWT = (token) =>
     if (!user) throw new Error("User not found!")
   
     if (user.refreshToken === actualRefreshToken) {
-      const { accessToken, refreshToken } = await JWTAuthenticate(user)
+      const { accessToken, refreshToken } = await generatePairOfTokens(user)
       return { accessToken, refreshToken }
     } else {
       throw createHttpError(401, "Refresh Token not valid!")
