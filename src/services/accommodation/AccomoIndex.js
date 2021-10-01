@@ -1,10 +1,18 @@
-//folder to create the endpoints and handlers
 
 import express from "express"
 import AccomoModel from "./AccomoSchema.js"
+import {JWTAuthMiddleware} from "../../OAuth/jwt-middle.js"
 
 
 const AccomoRouter = express.Router()
+
+
+
+
+AccomoRouter.get("/user/me/accomodation", JWTAuthMiddleware, (req, res, next) => {
+    
+})
+
 
 AccomoRouter.post("/", async (req, res,next) => {
     try {
