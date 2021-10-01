@@ -4,6 +4,7 @@ import cors from "cors"
 import usersRouter from "./src/services/users/index.js" // for user routes same exact line
 import lib from "./src/library/index.js"
 import mongoose from 'mongoose'
+import listEndpoints from "express-list-endpoints"
 // import passport from "passport"
 // import { googleStrategy } from "./src/auth/Oauth/strategy-config.js"
 
@@ -42,6 +43,8 @@ mongoose.connection.on('connected', () => {
   server.listen(PORT, async () => {
     console.log("🚀 Server is running on port ", PORT)
   })
+
+  console.table(listEndpoints(server))
 
   mongoose.connection.on('error', error => {
     console.log('Mongo error: ', error)
