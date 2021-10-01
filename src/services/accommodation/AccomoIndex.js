@@ -20,6 +20,10 @@ const AccomoRouter = express.Router()
 // and then from req.user you need to retrieve the user._id
 AccomoRouter.post("/", JWTAuthMiddleware, onlyHostAllowedRoute,  async (req, res,next) => {
     try {
+
+      // for this one you need to merge the body (with the accomodation data)
+      // and retrieve the user ID from req.user._id
+      //and send this merged objt to the AccomoSchema
        const newAccomo= new AccomoSchema(req.body)
 
         const { _id } = await newAccomo.save()
@@ -39,19 +43,25 @@ AccomoRouter.get("/",JWTAuthMiddleware, async (req, res,next) => {
       }
 })
 
+// get single accommodation by ID
 AccomoRouter.get("/:_id", JWTAuthMiddleware, async (req, res,next) => {
     try {
-        res.send(req.accommodations)
+      const accommodations = await AccomoModel.findById(req.params._id)
+        res.send(accommodations)
       } catch (error) {
         next(error)
       }
 })
 
-AccomoRouter.put("/:id", JWTAuthMiddleware,onlyHostAllowedRoute, async (req, res,next) => {
+
+//just missing the match accommodation ID and host ID
+AccomoRouter.put("/:_id", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res,next) => {
     
     try {
-        const accomoId = req.params.id;
+        const accomoId = req.params._id;
     
+        //  AccomoModel.find by host Id and accommodation id
+        // modify and save()
         const modifiedAccomo = await AccomoModel.findByIdAndUpdate(
             accomoId,
           req.body,
@@ -71,7 +81,7 @@ AccomoRouter.put("/:id", JWTAuthMiddleware,onlyHostAllowedRoute, async (req, res
     
 })
 
-AccomoRouter.delete("/:id", JWTAuthMiddleware,onlyHostAllowedRoute, async (req, res,next) => {
+AccomoRouter.delete("/:id", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res,next) => {
     try {
         await req.accommodations.deleteOne()
         res.status(204).send()

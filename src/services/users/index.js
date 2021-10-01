@@ -7,6 +7,7 @@ import createHttpError from "http-errors"
 import passport from "passport"
 import { usersValidationMiddleware } from "./validation.js"
 import { validationResult } from "express-validator"
+import AccomoModel from "../accommodation/AccomoSchema.js"
 
 
 const usersRouter = express.Router()
@@ -14,9 +15,10 @@ const usersRouter = express.Router()
 
 usersRouter.get("/me/accomodation",  JWTAuthMiddleware, onlyHostAllowedRoute, async(req, res, next) => {
 
+    // need to test
     try{
         if(req.user.role === "host"){
-            const retrievedAccomodations = await UserModel.find({}).populate('user',req.user)
+            const retrievedAccomodations = await AccomoModel.find({host: req.user._id})
 
         if(retrievedAccomodations){
             res.send(retrievedAccomodations)
@@ -54,7 +56,8 @@ usersRouter.post("/register", usersValidationMiddleware, async (req, res, next) 
     }
 })
 
-usersRouter.get("/", JWTAuthMiddleware,  async (req, res, next) => {
+//return al the users for us to have a list of users
+usersRouter.get("/", async (req, res, next) => {
     try {
         const users = await UserModel.find()
         res.send(users)
@@ -118,13 +121,12 @@ usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
 
 
 usersRouter.post("/login", async (req, res, next) => {
-    try {
-        console.log('sadakjshdk jhsakjdshakjdhdasdas')
+    try {   
         const { email, password } = req.body
-        console.log(email, password, 'jhsakjdshakjdhdasdas')
 
         const user = await UserModel.checkCredentials(email, password)
-        console.log(user)
+        
+         console.log(user)
         if (user) {
 
             //generate an access token
