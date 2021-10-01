@@ -1,6 +1,6 @@
 import express from "express"
 import UserModel from './schema.js'
-import { adminOnlyMiddleware } from "../../OAuth/admin.js"
+
 /* import { JWTAuthMiddleware } from "../../OAuth/token.js" */
 
 const usersRouter = express.Router()
