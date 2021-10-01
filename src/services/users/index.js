@@ -4,6 +4,7 @@ import { onlyHostAllowedRoute } from '../../OAuth/host_validation_middlew.js'
 import { generatePairOfTokens } from '../../OAuth/jwt-aux.js'
 import { JWTAuthMiddleware } from "../../OAuth/jwt-middle.js"
 import createHttpError from "http-errors"
+import passport from "passport"
 
 const usersRouter = express.Router()
 
@@ -12,13 +13,15 @@ usersRouter.post("/register", async (req, res, next) => {
         const newUser = new UserModel(req.body)
         const { _id } = await newUser.save()
 
-        res.status(201).send({ _id })
+        const { accessToken, refreshToken } = await generatePairOfTokens(newUser)
+
+        res.status(201).send({ accessToken, refreshToken })
     } catch (error) {
         next(error)
     }
 })
 
-usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
+usersRouter.get("/", JWTAuthMiddleware,  async (req, res, next) => {
     try {
         const users = await UserModel.find()
         res.send(users)
@@ -52,18 +55,20 @@ usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
         next(error)
     }
 })
-usersRouter.get("/:userId", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
-    try {
-        const user = await UserModel.findById(req.params.userId)
-        res.send(user)
-    } catch (error) {
-        next(error)
-    }
-})
+// usersRouter.get("/:userId", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
+//     try {
+//         const user = await UserModel.findById(req.params.userId)
+//         res.send(user)
+//     } catch (error) {
+//         next(error)
+//     }
+// })
 
 usersRouter.post("/login", async (req, res, next) => {
     try {
+        console.log('sadakjshdk jhsakjdshakjdhdasdas')
         const { email, password } = req.body
+        console.log(email, password, 'jhsakjdshakjdhdasdas')
 
         const user = await UserModel.checkCredentials(email, password)
         console.log(user)
@@ -82,6 +87,54 @@ usersRouter.post("/login", async (req, res, next) => {
         next(error)
     }
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+usersRouter.get('/facebookLogin', passport.authenticate('facebook', { scope : ['email'] }))
+
+usersRouter.get('/facebookRedirect', passport.authenticate('facebook'),
+    (req, res, next) => {
+        try {
+            console.log(req.user)
+            res.redirect(`http://localhost:3000/?accessToken=${req.user.tokens.accessToken}&refreshToken=${req.user.tokens.refreshToken}`)
+            res.send(req.user)
+        } catch (error) {
+            next(error)
+        }
+
+    })
+
+
 
 
 

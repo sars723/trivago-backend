@@ -1,14 +1,15 @@
 // import GoogleStrategy from 'passport-google-oauth20'
 import FacebookStrategy from 'passport-facebook'
 import passport from 'passport'
-import User from '../../db/models/User.js'
-import { JWTAuthenticate } from '../jwt-aux.js'
+import UserModel from '../../services/users/schema.js'
+import { generatePairOfTokens } from '../jwt-aux.js'
 
 
 const facebookStrategyConfig = {
   clientID: process.env.FACEBOOK_API_OAUTH_ID,
   clientSecret: process.env.FACEBOOK_API_SECRET_KEY,
-  callbackURL: process.env.BE_URL + process.env.PORT + '/user/facebookRedirect',
+  callbackURL: process.env.BE_URL + process.env.PORT + '/users/facebookRedirect',
+  profileFields: ['id', 'emails', 'name']
 }
 
 export const facebookStrategy = new FacebookStrategy(
@@ -18,10 +19,10 @@ export const facebookStrategy = new FacebookStrategy(
     try {
       console.log(profile)
 
-      const user = await User.findOne({ facebook_Id: profile.id })
+      const user = await UserModel.findOne({ facebook_Id: profile.id })
 
       if (user) {
-        const tokens = await JWTAuthenticate(user)
+        const tokens = await generatePairOfTokens(user)
         passportNext(null, { tokens })
 
       } else {
@@ -33,9 +34,9 @@ export const facebookStrategy = new FacebookStrategy(
           facebook_Id: profile.id,
         }
 
-        const createdUser = new User(newUser)
+        const createdUser = new UserModel(newUser)
         const savedUser = await createdUser.save()
-        const tokens = await JWTAuthenticate(savedUser)
+        const tokens = await generatePairOfTokens(savedUser)
 
         passportNext(null, { user: savedUser, tokens })
       }

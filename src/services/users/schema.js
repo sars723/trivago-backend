@@ -3,6 +3,8 @@ import bcrypt from "bcrypt"
 
 const { Schema, model } = mongoose
 
+
+// name surname must be required
 const UserSchema = new Schema(
     {
         name: { type: String },

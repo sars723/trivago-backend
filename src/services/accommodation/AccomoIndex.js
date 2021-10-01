@@ -9,7 +9,7 @@ const AccomoRouter = express.Router()
 
 
 
-AccomoRouter.get("/user/me/accomodation", JWTAuthMiddleware, (req, res, next) => {
+AccomoRouter.get("/me/accomodation", JWTAuthMiddleware, (req, res, next) => {
     
 })
 
