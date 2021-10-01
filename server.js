@@ -44,7 +44,7 @@ mongoose.connection.on('connected', () => {
     console.log("🚀 Server is running on port ", PORT)
   })
 
-  console.table(listEndpoints(server))
+
 
   mongoose.connection.on('error', error => {
     console.log('Mongo error: ', error)
