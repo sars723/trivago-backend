@@ -5,8 +5,8 @@ import usersRouter from "./src/services/users/index.js" // for user routes same 
 import lib from "./src/library/index.js"
 import mongoose from 'mongoose'
 import listEndpoints from "express-list-endpoints"
-// import passport from "passport"
-// import { googleStrategy } from "./src/auth/Oauth/strategy-config.js"
+import passport from "passport"
+import { facebookStrategy } from "./src/OAuth/OAuth_Strategies/strategy-config.js"
 
 const { errorHandlers, serverConfig } = lib
 
@@ -15,11 +15,11 @@ const { errorHandlers, serverConfig } = lib
 const server = express()
 const { PORT } = process.env
 
-// passport.use('google', googleStrategy)
+passport.use('facebook', facebookStrategy)
 
 server.use(express.json())
 server.use(cors(serverConfig))
-// server.use(passport.initialize())
+server.use(passport.initialize())
 
 server.use("/accommodation", AccomoRouter)// rename and use for accommodation same exact line
 server.use("/users", usersRouter) //use for user same exact line

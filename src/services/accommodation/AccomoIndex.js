@@ -14,6 +14,7 @@ const AccomoRouter = express.Router()
 
 
 
+
 //you have to put the token validation middleware
 //you need to put the host validation middleware
 // and then from req.user you need to retrieve the user._id
