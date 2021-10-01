@@ -2,6 +2,8 @@
 import express from "express"
 import AccomoModel from "./AccomoSchema.js"
 import {JWTAuthMiddleware} from "../../OAuth/jwt-middle.js"
+import { onlyHostAllowedRoute } from "../../OAuth/host_validation_middlew.js"
+import createError from "http-errors"
 
 
 const AccomoRouter = express.Router()
@@ -13,45 +15,40 @@ AccomoRouter.get("/user/me/accomodation", JWTAuthMiddleware, (req, res, next) =>
     
 })
 
-
-AccomoRouter.post("/", async (req, res,next) => {
+//you have to put the token validation middleware
+//you need to put the host validation middleware
+// and then from req.user you need to retrieve the user._id
+AccomoRouter.post("/", JWTAuthMiddleware, onlyHostAllowedRoute,  async (req, res,next) => {
     try {
-        const newAccomo= new AccomoSchema(req.body)
-        const { _id } = await newUser.save()
+        const newAccomo= new AccomoModel(req.body)
+        req.user = req.params.user.id
+        const { _id } = await newAccomo.save()
     
         res.status(201).send({ _id })
       } catch (error) {
-        next(error)
+        next(createError(400, `Invalid Id: ${_id}!`))
       }
 })
 
-AccomoRouter.get("/", async (req, res,next) => {
+AccomoRouter.get("/",JWTAuthMiddleware, async (req, res,next) => {
     try {
-        const users = await UserModel.find()
-        res.send(users)
+        const accommodations = await AccomoModel.find()
+        res.send(accommodations)
       } catch (error) {
         next(error)
       }
 })
 
-AccomoRouter.get("/:id", async (req, res,next) => {
+AccomoRouter.get("/:_id", JWTAuthMiddleware, async (req, res,next) => {
     try {
-        res.send(req.user)
+        res.send(req.accommodations)
       } catch (error) {
         next(error)
       }
 })
 
-AccomoRouter.put("/:id", async (req, res,next) => {
-    // try {
-    //     req.user.name = "John"
+AccomoRouter.put("/:id", JWTAuthMiddleware,onlyHostAllowedRoute, async (req, res,next) => {
     
-    //     await req.user.save()
-    //     res.send()
-    //   } catch (error) {
-    //     next(error)
-    //   }
-
     try {
         const accomoId = req.params.id;
     
@@ -64,9 +61,9 @@ AccomoRouter.put("/:id", async (req, res,next) => {
         );
     
         if (modifiedAccomo) {
-          res.send(modifiedAccomo);
+          res.status(204).send(modifiedAccomo);
         } else {
-          next(createError(404, `Accommodation with id ${accomoId} not found!`));
+          next(createError(404, `Accommodation with id ${accomoId} does not exists!`));
         }
       } catch (error) {
         next(error);
@@ -74,12 +71,12 @@ AccomoRouter.put("/:id", async (req, res,next) => {
     
 })
 
-AccomoRouter.delete("/:id", async (req, res,next) => {
+AccomoRouter.delete("/:id", JWTAuthMiddleware,onlyHostAllowedRoute, async (req, res,next) => {
     try {
-        await req.user.deleteOne()
-        res.send()
+        await req.accommodations.deleteOne()
+        res.status(204).send()
       } catch (error) {
-        next(error)
+        next(createError(404, `Accommodation with id ${accomoId} does not exists!`))
       }
 })
 
