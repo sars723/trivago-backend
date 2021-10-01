@@ -12,6 +12,8 @@ usersRouter.post("/register", async (req, res, next) => {
         const newUser = new UserModel(req.body)
         const { _id } = await newUser.save()
 
+        const { accessToken, refreshToken } = await generatePairOfTokens(newUser)
+
         res.status(201).send({ _id })
     } catch (error) {
         next(error)
@@ -37,8 +39,12 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
 
 usersRouter.put("/me", JWTAuthMiddleware, async (req, res, next) => {
     try {
-
-        res.send()
+        const userID = req.user._id
+        console.log(userID)
+        const updatedUser = await UserModel.findByIdAndUpdate(userID, req.body, {
+            new: true
+        })
+        res.send(updatedUser)
     } catch (error) {
         next(error)
     }
@@ -52,6 +58,7 @@ usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
         next(error)
     }
 })
+
 usersRouter.get("/:userId", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
     try {
         const user = await UserModel.findById(req.params.userId)
@@ -82,7 +89,5 @@ usersRouter.post("/login", async (req, res, next) => {
         next(error)
     }
 })
-
-
 
 export default usersRouter
