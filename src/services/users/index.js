@@ -18,7 +18,7 @@ usersRouter.post("/register", async (req, res, next) => {
     }
 })
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
     try {
         const users = await UserModel.find()
         res.send(users)
@@ -27,15 +27,15 @@ usersRouter.get("/", async (req, res, next) => {
     }
 })
 
-usersRouter.get("/me", async (req, res, next) => {
+usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
     try {
-        /*  res.send(req.user) */
+        res.send(req.user)
     } catch (error) {
         next(error)
     }
 })
 
-usersRouter.put("/me", async (req, res, next) => {
+usersRouter.put("/me", JWTAuthMiddleware, async (req, res, next) => {
     try {
 
         res.send()
@@ -44,15 +44,15 @@ usersRouter.put("/me", async (req, res, next) => {
     }
 })
 
-usersRouter.delete("/", async (req, res, next) => {
+usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
     try {
-        /*  await req.user.deleteOne() */
-        res.send()
+        await req.user.deleteOne()
+        res.send("deleted")
     } catch (error) {
         next(error)
     }
 })
-usersRouter.get("/:userId"/* , hostOnlyMiddleware */, async (req, res, next) => {
+usersRouter.get("/:userId", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
     try {
         const user = await UserModel.findById(req.params.userId)
         res.send(user)
