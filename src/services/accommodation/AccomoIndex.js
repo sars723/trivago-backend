@@ -1,12 +1,14 @@
 //folder to create the endpoints and handlers
 
 import express from "express"
+import AccomoModel from "./AccomoSchema.js"
+
 
 const AccomoRouter = express.Router()
 
-AccomoRouter.post("/accommodation", async (req, res,next) => {
+AccomoRouter.post("/", async (req, res,next) => {
     try {
-        const newUser = new UserModel(req.body)
+        const newAccomo= new AccomoSchema(req.body)
         const { _id } = await newUser.save()
     
         res.status(201).send({ _id })
@@ -33,14 +35,35 @@ AccomoRouter.get("/:id", async (req, res,next) => {
 })
 
 AccomoRouter.put("/:id", async (req, res,next) => {
-    try {
-        req.user.name = "John"
+    // try {
+    //     req.user.name = "John"
     
-        await req.user.save()
-        res.send()
+    //     await req.user.save()
+    //     res.send()
+    //   } catch (error) {
+    //     next(error)
+    //   }
+
+    try {
+        const accomoId = req.params.id;
+    
+        const modifiedAccomo = await AccomoModel.findByIdAndUpdate(
+            accomoId,
+          req.body,
+          {
+            new: true, // returns the modified Accommodation
+          }
+        );
+    
+        if (modifiedAccomo) {
+          res.send(modifiedAccomo);
+        } else {
+          next(createError(404, `Accommodation with id ${accomoId} not found!`));
+        }
       } catch (error) {
-        next(error)
+        next(error);
       }
+    
 })
 
 AccomoRouter.delete("/:id", async (req, res,next) => {

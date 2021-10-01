@@ -1,5 +1,5 @@
 import mongoose  from "mongoose";
-import bcrypt from "bcrypt"
+
 
 
 const {Schema, model} = mongoose
@@ -15,4 +15,4 @@ const AccomoSchema = new Schema(
     { timestamps: true }
   )
 
-  export default model("User", AccomoSchema)
+  export default AccomoModel("Accomodation", AccomoModel)
