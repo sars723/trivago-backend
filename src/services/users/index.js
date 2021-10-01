@@ -150,7 +150,7 @@ usersRouter.get('/facebookRedirect', passport.authenticate('facebook'),
         try {
             console.log(req.user)
             res.redirect(`http://localhost:3000/?accessToken=${req.user.tokens.accessToken}&refreshToken=${req.user.tokens.refreshToken}`)
-            res.send(req.user)
+            // res.send(req.user)
         } catch (error) {
             next(error)
         }

@@ -20,23 +20,33 @@ const AccomoRouter = express.Router()
 // and then from req.user you need to retrieve the user._id
 AccomoRouter.post("/", JWTAuthMiddleware, onlyHostAllowedRoute,  async (req, res,next) => {
     try {
+      // console.log('inside post accomoo', req.user)
 
       // for this one you need to merge the body (with the accomodation data)
       // and retrieve the user ID from req.user._id
+      const userID = req.user._id
+      console.log(req.user._id, 'just ID')
+      // console.log(userId , 'USER ID')
+      const mergedData = {
+        ...req.body,
+        host: userID
+      }
+      // console.log(mergedData, 'MERGED DATA')
       //and send this merged objt to the AccomoSchema
-       const newAccomo= new AccomoSchema(req.body)
+       const newAccomo= new AccomoModel(mergedData)
 
-        const { _id } = await newAccomo.save()
+        const savedAccomo= await newAccomo.save()
+        console.log(savedAccomo)
     
-        res.status(201).send({ _id })
+        res.status(201).send(savedAccomo)
       } catch (error) {
-        next(createError(400, `Invalid Id: ${_id}!`))
+        next(createError(400, `Invalid Id: ${error}}!`))
       }
 })
 
-AccomoRouter.get("/",JWTAuthMiddleware, async (req, res,next) => {
+AccomoRouter.get("/", JWTAuthMiddleware, async (req, res,next) => {
     try {
-        const accommodations = await AccomoModel.find()
+        const accommodations = await AccomoModel.find().populate('host')
         res.send(accommodations)
       } catch (error) {
         next(error)
