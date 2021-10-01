@@ -1,7 +1,7 @@
 
 import express from "express"
 import AccomoModel from "./AccomoSchema.js"
-import {JWTAuthMiddleware} from "../../OAuth/jwt-middle.js"
+// import {JWTAuthMiddleware} from "../../OAuth/jwt-middle.js"
 
 
 const AccomoRouter = express.Router()
@@ -9,15 +9,13 @@ const AccomoRouter = express.Router()
 
 
 
-AccomoRouter.get("/user/me/accomodation", JWTAuthMiddleware, (req, res, next) => {
-    
-})
+
 
 
 AccomoRouter.post("/", async (req, res,next) => {
     try {
         const newAccomo= new AccomoSchema(req.body)
-        const { _id } = await newUser.save()
+        const { _id } = await newAccomo.save()
     
         res.status(201).send({ _id })
       } catch (error) {
