@@ -2,6 +2,7 @@
 import express from "express"
 import AccomoModel from "./AccomoSchema.js"
 import {JWTAuthMiddleware} from "../../OAuth/jwt-middle.js"
+import createHttpError from "http-errors"
 
 
 const AccomoRouter = express.Router()
@@ -21,14 +22,14 @@ AccomoRouter.post("/", async (req, res,next) => {
     
         res.status(201).send({ _id })
       } catch (error) {
-        next(error)
+        next(createError(404, `Invalid Id: ${accomoId}!`))
       }
 })
 
 AccomoRouter.get("/", async (req, res,next) => {
     try {
-        const accomodations = await AccomoModel.find()
-        res.send(accomodations)
+        const accommodations = await AccomoModel.find()
+        res.send(accommodations)
       } catch (error) {
         next(error)
       }
@@ -36,7 +37,7 @@ AccomoRouter.get("/", async (req, res,next) => {
 
 AccomoRouter.get("/:id", async (req, res,next) => {
     try {
-        res.send(req.accomodations)
+        res.send(req.accommodations)
       } catch (error) {
         next(error)
       }
@@ -64,7 +65,7 @@ AccomoRouter.put("/:id", async (req, res,next) => {
         );
     
         if (modifiedAccomo) {
-          res.send(modifiedAccomo);
+          res.status(204).send(modifiedAccomo);
         } else {
           next(createError(404, `Accommodation with id ${accomoId} not found!`));
         }
@@ -76,10 +77,10 @@ AccomoRouter.put("/:id", async (req, res,next) => {
 
 AccomoRouter.delete("/:id", async (req, res,next) => {
     try {
-        await req.accomodations.deleteOne()
-        res.send()
+        await req.accommodations.deleteOne()
+        res.status(204).send()
       } catch (error) {
-        next(error)
+        next(createError(404, `Accommodation with id ${accomoId} not found!`))
       }
 })
 
