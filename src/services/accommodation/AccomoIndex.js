@@ -21,6 +21,7 @@ AccomoRouter.get("/user/me/accomodation", JWTAuthMiddleware, (req, res, next) =>
 AccomoRouter.post("/", JWTAuthMiddleware, onlyHostAllowedRoute,  async (req, res,next) => {
     try {
         const newAccomo= new AccomoModel(req.body)
+        req.user = req.params.user.id
         const { _id } = await newAccomo.save()
     
         res.status(201).send({ _id })
