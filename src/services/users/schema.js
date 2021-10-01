@@ -7,7 +7,7 @@ const UserSchema = new Schema(
     {
         name: { type: String },
         surname: { type: String },
-        email: { type: String, required: true },
+        email: { type: String, required: true, unique: true/*  [true, "email must be unique"] */ },
         password: { type: String },
         facebook_Id: { type: String },
         role: { type: String, required: true, enum: ["host", "guest"], default: "guest" },

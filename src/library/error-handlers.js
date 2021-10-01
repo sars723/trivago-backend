@@ -13,27 +13,27 @@ const badRequestErrorHandler = (err, req, res, next) => {
     if (err.status === 400) {
         res.status(400).send({
             success: false,
-            msg: err, 
+            msg: err,
         })
     } else {
         next(err)
     }
 }
 
- const unauthorizedHandler = (err, req, res, next) => {
+const unauthorizedHandler = (err, req, res, next) => {
     if (err.status === 401) {
         console.log(err)
-      res.status(401).send({ status: "error", message: err.message || "You are not logged in!" })
+        res.status(401).send({ status: "error", message: err.message || "You are not logged in!" })
     } else {
-      next(err)
+        next(err)
     }
-  }
+}
 
- const forbiddenRequest = (err, req, res, next) => {
+const forbiddenRequest = (err, req, res, next) => {
     if (err.status === 403) {
         res.status(400).send({
             success: false,
-            msg: err, 
+            msg: err,
         })
     } else {
         next(err)
@@ -42,7 +42,7 @@ const badRequestErrorHandler = (err, req, res, next) => {
 
 const serverErrorHandler = (err, req, res, next) => {
     console.log(err)
-   
+
     res.status(500).send("I'm having some existential crisis at the moment, ask me later!")
 }
 
