@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-// import blogPostRouter from "./src/services/blogPost/index.js" -<<<< for accommodation please use the same exact line
+import AccomoRouter from "./src/services/accommodation/AccomoIndex.js" //-<<<< for accommodation please use the same exact line
 import usersRouter from "./src/services/users/index.js" // for user routes same exact line
 import lib from "./src/library/index.js"
 import mongoose from 'mongoose'
@@ -23,6 +23,7 @@ server.use(cors(serverConfig))
 
 // server.use("/blogPost", blogPostRouter) rename and use for accommodation same exact line
 server.use("/users", usersRouter) //use for user same exact line
+server.use("/accommodation", AccomoRouter)
 
 
 
@@ -44,6 +45,8 @@ mongoose.connection.on('connected', () => {
     console.log("🚀 Server is running on port ", PORT)
   })
 
+
+    console.table(listEndpoints(server))
 
 
   mongoose.connection.on('error', error => {
