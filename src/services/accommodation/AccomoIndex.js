@@ -16,8 +16,8 @@ AccomoRouter.get("/user/me/accomodation", JWTAuthMiddleware, (req, res, next) =>
 
 AccomoRouter.post("/", async (req, res,next) => {
     try {
-        const newAccomo= new AccomoSchema(req.body)
-        const { _id } = await newUser.save()
+        const newAccomo= new AccomoModel(req.body)
+        const { _id } = await newAccomo.save()
     
         res.status(201).send({ _id })
       } catch (error) {
@@ -27,8 +27,8 @@ AccomoRouter.post("/", async (req, res,next) => {
 
 AccomoRouter.get("/", async (req, res,next) => {
     try {
-        const users = await UserModel.find()
-        res.send(users)
+        const accomodations = await AccomoModel.find()
+        res.send(accomodations)
       } catch (error) {
         next(error)
       }
@@ -36,7 +36,7 @@ AccomoRouter.get("/", async (req, res,next) => {
 
 AccomoRouter.get("/:id", async (req, res,next) => {
     try {
-        res.send(req.user)
+        res.send(req.accomodations)
       } catch (error) {
         next(error)
       }
@@ -76,7 +76,7 @@ AccomoRouter.put("/:id", async (req, res,next) => {
 
 AccomoRouter.delete("/:id", async (req, res,next) => {
     try {
-        await req.user.deleteOne()
+        await req.accomodations.deleteOne()
         res.send()
       } catch (error) {
         next(error)
