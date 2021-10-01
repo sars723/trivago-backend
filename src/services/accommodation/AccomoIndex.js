@@ -4,22 +4,52 @@ import express from "express"
 
 const AccomoRouter = express.Router()
 
-AccomoRouter.post("/register", async (req, res,next) => {
+AccomoRouter.post("/accommodation", async (req, res,next) => {
+    try {
+        const newUser = new UserModel(req.body)
+        const { _id } = await newUser.save()
     
+        res.status(201).send({ _id })
+      } catch (error) {
+        next(error)
+      }
 })
 
-AccomoRouter.get("/register", async (req, res,next) => {
-    
+AccomoRouter.get("/", async (req, res,next) => {
+    try {
+        const users = await UserModel.find()
+        res.send(users)
+      } catch (error) {
+        next(error)
+      }
 })
 
-AccomoRouter.get("/register", async (req, res,next) => {
-    
+AccomoRouter.get("/:id", async (req, res,next) => {
+    try {
+        res.send(req.user)
+      } catch (error) {
+        next(error)
+      }
 })
 
-AccomoRouter.put("/register", async (req, res,next) => {
+AccomoRouter.put("/:id", async (req, res,next) => {
+    try {
+        req.user.name = "John"
     
+        await req.user.save()
+        res.send()
+      } catch (error) {
+        next(error)
+      }
 })
 
-AccomoRouter.post("/register", async (req, res,next) => {
-    
+AccomoRouter.delete("/:id", async (req, res,next) => {
+    try {
+        await req.user.deleteOne()
+        res.send()
+      } catch (error) {
+        next(error)
+      }
 })
+
+export default AccomoRouter
