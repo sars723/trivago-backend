@@ -21,9 +21,8 @@ server.use(express.json())
 server.use(cors(serverConfig))
 server.use(passport.initialize())
 
-// server.use("/blogPost", blogPostRouter) rename and use for accommodation same exact line
+server.use("/accommodation", AccomoRouter)// rename and use for accommodation same exact line
 server.use("/users", usersRouter) //use for user same exact line
-server.use("/accommodation", AccomoRouter)
 
 
 
