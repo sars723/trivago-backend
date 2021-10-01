@@ -9,7 +9,28 @@ import { validationResult } from "express-validator"
 
 const usersRouter = express.Router()
 
+
+usersRouter.get("/me/accomodation",  JWTAuthMiddleware, onlyHostAllowedRoute, async(req, res, next) => {
+
+    try{
+        if(req.user.role === "host"){
+            const retrievedAccomodations = await UserModel.find({}).populate('user',req.user)
+
+        if(retrievedAccomodations){
+            res.send(retrievedAccomodations)
+        }}else{
+            next(createHttpError(403, "User Unauthorized"))
+        }
+        }catch(err){
+            next(createHttpError(500,"Somethings not right bro"))
+        }
+    
+})
+
+
+
 usersRouter.post("/register", usersValidationMiddleware, async (req, res, next) => {
+
     try {
         const errorsList = validationResult(req)
 
@@ -77,7 +98,9 @@ usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
     }
 })
 
+
 /* usersRouter.get("/me", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
+
     try {
         const user = await UserModel.findById(req.params.userId)
         if (user) {

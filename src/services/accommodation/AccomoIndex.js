@@ -6,22 +6,21 @@ import { onlyHostAllowedRoute } from "../../OAuth/host_validation_middlew.js"
 import createError from "http-errors"
 
 
+
 const AccomoRouter = express.Router()
 
 
 
 
-AccomoRouter.get("/user/me/accomodation", JWTAuthMiddleware, (req, res, next) => {
-    
-})
+
 
 //you have to put the token validation middleware
 //you need to put the host validation middleware
 // and then from req.user you need to retrieve the user._id
 AccomoRouter.post("/", JWTAuthMiddleware, onlyHostAllowedRoute,  async (req, res,next) => {
     try {
-        const newAccomo= new AccomoModel(req.body)
-        req.user = req.params.user.id
+       const newAccomo= new AccomoSchema(req.body)
+
         const { _id } = await newAccomo.save()
     
         res.status(201).send({ _id })
