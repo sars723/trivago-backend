@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors"
 // import blogPostRouter from "./src/services/blogPost/index.js" -<<<< for accommodation please use the same exact line
 // import usersRouter from "./src/services/user/index.js" -<<<< for user routes same exact line
-import lib from "./src/lib/index.js"
+import lib from "./src/library/index.js"
 import mongoose from 'mongoose'
 // import passport from "passport"
 // import { googleStrategy } from "./src/auth/Oauth/strategy-config.js"
