@@ -15,4 +15,4 @@ const AccomoSchema = new Schema(
     { timestamps: true }
   )
 
-  export default AccomoModel("Accomodation", AccomoModel)
+  export default model("Accomodation", AccomoSchema)
