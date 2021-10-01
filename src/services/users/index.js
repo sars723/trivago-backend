@@ -4,17 +4,28 @@ import { onlyHostAllowedRoute } from '../../OAuth/host_validation_middlew.js'
 import { generatePairOfTokens } from '../../OAuth/jwt-aux.js'
 import { JWTAuthMiddleware } from "../../OAuth/jwt-middle.js"
 import createHttpError from "http-errors"
+import { usersValidationMiddleware } from "./validation.js"
+import { validationResult } from "express-validator"
 
 const usersRouter = express.Router()
 
-usersRouter.post("/register", async (req, res, next) => {
+usersRouter.post("/register", usersValidationMiddleware, async (req, res, next) => {
     try {
-        const newUser = new UserModel(req.body)
-        const { _id } = await newUser.save()
+        const errorsList = validationResult(req)
 
-        const { accessToken, refreshToken } = await generatePairOfTokens(newUser)
+        if (!errorsList.isEmpty()) {
 
-        res.status(201).send({ _id })
+            next(createHttpError(400, { errorsList }))
+        } else {
+            const newUser = new UserModel(req.body)
+
+            const { _id } = await newUser.save()
+
+            const { accessToken, refreshToken } = await generatePairOfTokens(newUser)
+
+            res.status(201).send({ _id })
+        }
+
     } catch (error) {
         next(error)
     }
@@ -44,7 +55,13 @@ usersRouter.put("/me", JWTAuthMiddleware, async (req, res, next) => {
         const updatedUser = await UserModel.findByIdAndUpdate(userID, req.body, {
             new: true
         })
-        res.send(updatedUser)
+        if (updatedUser) {
+            res.send(updatedUser)
+        }
+        else {
+            res.status(404).send("not found")
+        }
+
     } catch (error) {
         next(error)
     }
@@ -53,20 +70,26 @@ usersRouter.put("/me", JWTAuthMiddleware, async (req, res, next) => {
 usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
     try {
         await req.user.deleteOne()
+
         res.send("deleted")
     } catch (error) {
         next(error)
     }
 })
 
-usersRouter.get("/:userId", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
+/* usersRouter.get("/me", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
     try {
         const user = await UserModel.findById(req.params.userId)
-        res.send(user)
+        if (user) {
+            res.send(user)
+        }
+        else {
+            next(createHttpError(404, "user not found"))
+        }
     } catch (error) {
         next(error)
     }
-})
+}) */
 
 usersRouter.post("/login", async (req, res, next) => {
     try {
