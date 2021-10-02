@@ -13,22 +13,13 @@ import AccomoModel from "../accommodation/AccomoSchema.js"
 const usersRouter = express.Router()
 
 
-usersRouter.get("/me/accomodation",  JWTAuthMiddleware, onlyHostAllowedRoute, async(req, res, next) => {
-
-    // need to test
-    try{
-        if(req.user.role === "host"){
-            const retrievedAccomodations = await AccomoModel.find({host: req.user._id})
-
-        if(retrievedAccomodations){
-            res.send(retrievedAccomodations)
-        }}else{
-            next(createHttpError(403, "User Unauthorized"))
-        }
-        }catch(err){
-            next(createHttpError(500,"Somethings not right bro"))
-        }
-    
+usersRouter.get("/me/accommodation", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
+    try {
+        const retrievedAccommodations = await AccomoModel.find({ host: req.user._id })
+        res.send(retrievedAccommodations)
+    } catch (err) {
+        next(err)
+    }
 })
 
 
@@ -56,7 +47,7 @@ usersRouter.post("/register", usersValidationMiddleware, async (req, res, next) 
     }
 })
 
-//return al the users for us to have a list of users
+//return all the users for us to have a list of users
 usersRouter.get("/", async (req, res, next) => {
     try {
         const users = await UserModel.find()
@@ -103,30 +94,13 @@ usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
     }
 })
 
-
-/* usersRouter.get("/me", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
-
-    try {
-        const user = await UserModel.findById(req.params.userId)
-        if (user) {
-            res.send(user)
-        }
-        else {
-            next(createHttpError(404, "user not found"))
-        }
-    } catch (error) {
-        next(error)
-    }
-}) */
-
-
 usersRouter.post("/login", async (req, res, next) => {
-    try {   
+    try {
         const { email, password } = req.body
 
         const user = await UserModel.checkCredentials(email, password)
-        
-         console.log(user)
+
+        console.log(user)
         if (user) {
 
             //generate an access token
@@ -134,8 +108,6 @@ usersRouter.post("/login", async (req, res, next) => {
 
             res.send({ accessToken, refreshToken })
         } else {
-
-            //sending an error (401)
             next(createHttpError(401, "Credentials are not ok!"))
         }
     } catch (error) {
@@ -143,14 +115,13 @@ usersRouter.post("/login", async (req, res, next) => {
     }
 })
 
-usersRouter.get('/facebookLogin', passport.authenticate('facebook', { scope : ['email'] }))
+usersRouter.get('/facebookLogin', passport.authenticate('facebook', { scope: ['email'] }))
 
 usersRouter.get('/facebookRedirect', passport.authenticate('facebook'),
     (req, res, next) => {
         try {
             console.log(req.user)
             res.redirect(`http://localhost:3000/?accessToken=${req.user.tokens.accessToken}&refreshToken=${req.user.tokens.refreshToken}`)
-            // res.send(req.user)
         } catch (error) {
             next(error)
         }
