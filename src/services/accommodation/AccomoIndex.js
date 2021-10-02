@@ -11,21 +11,6 @@ import { accommoValidation } from './validation.js'
 
 const AccomoRouter = express.Router()
 
-
-// GET /user/me/accommodation
-
-// returns the full list of managed accommodation
-
-
-// DELETE /accommodation/:id
-
-// will delete an existing accommodation
-// 204 if ok
-// 404 if not existing
-
-
-
-
 // POST /accommodation
 AccomoRouter.post("/", JWTAuthMiddleware, onlyHostAllowedRoute, accommoValidation, async (req, res, next) => {
   try {
