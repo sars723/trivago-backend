@@ -45,7 +45,7 @@ mongoose.connection.on('connected', () => {
   })
 
 
-  console.table(listEndpoints(server))
+
 
 
   mongoose.connection.on('error', error => {
