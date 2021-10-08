@@ -1,16 +1,16 @@
 import express from "express"
 import cors from "cors"
-import AccomoRouter from "./src/services/accommodation/AccomoIndex.js" //-<<<< for accommodation please use the same exact line
-import usersRouter from "./src/services/users/index.js" // for user routes same exact line
-import lib from "./src/library/index.js"
+import AccomoRouter from "./services/accommodation/AccomoIndex.js" //-<<<< for accommodation please use the same exact line
+import usersRouter from "./services/users/index.js" // for user routes same exact line
+import lib from "./library/index.js"
 import mongoose from 'mongoose'
 import listEndpoints from "express-list-endpoints"
 import passport from "passport"
-import { facebookStrategy } from "./src/OAuth/OAuth_Strategies/strategy-config.js"
+import { facebookStrategy } from "./OAuth/OAuth_Strategies/strategy-config.js"
 
 const { errorHandlers, serverConfig } = lib
 
-
+process.env.TS_NODE_DEV && require("dotenv").config()
 
 const server = express()
 const { PORT } = process.env
@@ -18,7 +18,7 @@ const { PORT } = process.env
 passport.use('facebook', facebookStrategy)
 
 server.use(express.json())
-server.use(cors(serverConfig))
+server.use(cors(/* serverConfig */))
 server.use(passport.initialize())
 
 server.use("/accommodation", AccomoRouter)// rename and use for accommodation same exact line
@@ -33,7 +33,9 @@ server.use(errorHandlers.unauthorizedHandler)
 server.use(errorHandlers.server)
 
 
-
+if (!process.env.MONGO_CONN) {
+  throw new Error("NO Mongo url defined")
+}
 
 mongoose.connect(process.env.MONGO_CONN)
 

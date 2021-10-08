@@ -6,9 +6,9 @@ import { generatePairOfTokens } from '../jwt-aux.js'
 
 
 const facebookStrategyConfig = {
-  clientID: process.env.FACEBOOK_API_OAUTH_ID,
-  clientSecret: process.env.FACEBOOK_API_SECRET_KEY,
-  callbackURL: process.env.BE_URL + process.env.PORT + '/users/facebookRedirect',
+  clientID: process.env.GOOGLE_OAUTH_ID,
+  clientSecret: process.env.GOOGLE_OAUTH_SECRET,
+  callbackURL: process.env.API_URL + process.env.PORT + '/users/facebookRedirect',
   profileFields: ['id', 'emails', 'name']
 }
 

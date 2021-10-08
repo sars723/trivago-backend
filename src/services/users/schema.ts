@@ -12,7 +12,7 @@ const UserSchema = new Schema(
         email: { type: String, required: true, unique: true/*  [true, "email must be unique"] */ },
         password: { type: String },
         facebook_Id: { type: String },
-        role: { type: String, required: true, enum: ["host", "guest"], default: "guest" },
+        role: { type: String, enum: ["host", "guest"], default: "guest" },
     },
     { timestamps: true }
 )

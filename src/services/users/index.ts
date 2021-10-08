@@ -1,19 +1,20 @@
 import express from "express"
-import UserModel from './schema.js'
-import { onlyHostAllowedRoute } from '../../OAuth/host_validation_middlew.js'
-import { generatePairOfTokens } from '../../OAuth/jwt-aux.js'
-import { JWTAuthMiddleware } from "../../OAuth/jwt-middle.js"
+import UserModel from './schema'
+import { onlyHostAllowedRoute } from '../../OAuth/host_validation_middlew'
+import { generatePairOfTokens } from '../../OAuth/jwt-aux'
+import { JWTAuthMiddleware } from "../../OAuth/jwt-middle"
 import createHttpError from "http-errors"
 import passport from "passport"
-import { usersValidationMiddleware } from "./validation.js"
+import { usersValidationMiddleware } from "./validations"
 import { validationResult } from "express-validator"
-import AccomoModel from "../accommodation/AccomoSchema.js"
+import AccomoModel from "../accommodation/AccomoSchema"
 
 
 const usersRouter = express.Router()
 
 
 usersRouter.get("/me/accommodation", JWTAuthMiddleware, onlyHostAllowedRoute, async (req, res, next) => {
+
     try {
         const retrievedAccommodations = await AccomoModel.find({ host: req.user._id })
         res.send(retrievedAccommodations)
