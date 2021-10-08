@@ -1,7 +1,7 @@
 import express from "express"
 import UserModel from './schema.js'
 import { onlyHostAllowedRoute } from '../../OAuth/host_validation_middlew.js'
-import { generatePairOfTokens } from '../../OAuth/jwt-aux.js'
+import { generatePairOfTokens, refreshTokens } from '../../OAuth/jwt-aux.js'
 import { JWTAuthMiddleware } from "../../OAuth/jwt-middle.js"
 import createHttpError from "http-errors"
 import passport from "passport"
@@ -96,7 +96,7 @@ usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
 
 usersRouter.post("/login", async (req, res, next) => {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body.body
 
         const user = await UserModel.checkCredentials(email, password)
 
@@ -127,5 +127,18 @@ usersRouter.get('/facebookRedirect', passport.authenticate('facebook'),
         }
 
     })
+
+
+usersRouter.post("/refreshToken", async (req, res, next) => {
+    try {
+      const currentRefreshToken  = req.body.body
+      const { accessToken, refreshToken } = await refreshTokens(currentRefreshToken)
+  
+      res.send({ accessToken, refreshToken })
+    } catch (error) {
+      next(error)
+    }
+  } 
+  )
 
 export default usersRouter
