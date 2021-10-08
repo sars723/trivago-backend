@@ -13,6 +13,7 @@ const UserSchema = new Schema(
         password: { type: String },
         facebook_Id: { type: String },
         role: { type: String, required: true, enum: ["host", "guest"], default: "guest" },
+        refreshToken: {type: String}
     },
     { timestamps: true }
 )

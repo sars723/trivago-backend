@@ -10,7 +10,6 @@ export const JWTAuthMiddleware = async (req, res, next) => {
     try {
 
       const token = req.headers.authorization.replace("Bearer ", "")
-      console.log("token", token)
 
       const decodedToken = await verifyJWT(token)
       console.log(decodedToken, 'decoded token')
